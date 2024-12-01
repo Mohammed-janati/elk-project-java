@@ -37,11 +37,11 @@ import javafx.stage.Stage;
 public class inputs {
 
     @FXML
-    private  TextField input,title,tags;
+    private  TextField input,title,tags,user,passw;
     @FXML
     private  TextArea description;
     @FXML
-    private  Label i1;
+    private  Label i1,error;
     @FXML
     private  ScrollPane sc;
     @FXML
@@ -56,9 +56,23 @@ public class inputs {
     private  ArrayList<Map<String, Object>> result = new ArrayList<>();
     int b=0;
     String a;
+    
     connection con = new connection();
     RestHighLevelClient client = con.CONNECT();
     indexobj i=new indexobj();
+    
+    Label titleLabel = null;
+    Label descriptionLabel = null;
+   
+    String id = null; 
+    Button deleteButton = null;
+    
+    private Stage stage;
+	 private Scene scene;
+	 private Parent root;
+    
+    
+    
     public void initialize() {
         // Set a fixed height for the ScrollPane’s viewport
         sc.setPrefViewportHeight(600); // Adjust as desired for visible viewport height
@@ -68,12 +82,24 @@ public class inputs {
         category.getItems().addAll("image", "livre", "service");
     }
 
-    
-    private Stage stage;
-	 private Scene scene;
-	 private Parent root;
+    public void auth(ActionEvent e) throws IOException {
+    	if(user.getText()!=null && !user.getText().isEmpty() && 
+    		passw.getText()!=null && !passw.getText().isEmpty() ) {
+    		
+    boolean b=indexfct.auth(user.getText(), passw.getText());
+    if(b) {
+    	this.switchToScene2(e);
+    }else {
+    	error.setVisible(true);
+    }
+    	
+    	}
+    	
+    	
+    }
+   
 	 
-	 public void switchToScene1(ActionEvent event) throws IOException {
+ 	 public void switchToScene1(ActionEvent event) throws IOException {
 	  root = FXMLLoader.load(getClass().getResource("/view.fxml"));
 	  stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 	  scene = new Scene(root);
@@ -88,7 +114,7 @@ public class inputs {
 	  stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 	  scene = new Scene(root);
 	  stage.setScene(scene);
-	  stage.setTitle("admin"); 
+	  stage.setTitle("welcome admin"); 
 	  stage.show();
 	 }
 	 
@@ -98,7 +124,17 @@ public class inputs {
 		 stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		 scene = new Scene(root);
 		 stage.setScene(scene);
-		  stage.setTitle("admin"); 
+		  stage.setTitle("add a record"); 
+		 stage.show();
+	 }
+	 
+	 public void switchToScene4(ActionEvent event) throws IOException {
+		 
+		 Parent root = FXMLLoader.load(getClass().getResource("/view4.fxml"));
+		 stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		 scene = new Scene(root);
+		 stage.setScene(scene);
+		 stage.setTitle("authentication"); 
 		 stage.show();
 	 }
     
@@ -192,11 +228,7 @@ public class inputs {
     
     
     
-    Label titleLabel = null;
-    Label descriptionLabel = null;
-   
-    String id = null; 
-    Button deleteButton = null;
+    
     public  void gettextadmin(ActionEvent e) throws IOException {
     	a = input.getText();
     	String selected=category.getValue();
