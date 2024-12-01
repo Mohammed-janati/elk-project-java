@@ -18,7 +18,7 @@
          <children>
             <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#switchToScene2" text="admin" textAlignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#switchToScene4" text="admin" textAlignment="CENTER">
                      <HBox.margin>
                         <Insets right="10.0" top="2.0" />
                      </HBox.margin>
