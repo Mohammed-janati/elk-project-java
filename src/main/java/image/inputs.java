@@ -41,11 +41,8 @@ public class inputs {
     @FXML
     private  TextArea description;
     @FXML
-<<<<<<< HEAD
     private  Label i1,error,chose;
-=======
-    private  Label i1,error;
->>>>>>> 9431e35effaf16b47d048d7e2a9dd48bde25a771
+ 
     @FXML
     private  ScrollPane sc;
     @FXML
