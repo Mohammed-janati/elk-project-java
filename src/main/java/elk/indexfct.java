@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -23,15 +25,18 @@ public class indexfct {
 	private static RestHighLevelClient client;
 	static SearchRequest searchRequest;
 	 static SearchSourceBuilder searchSourceBuilder ;
+	 private static String index;
 	 
 	 
 	 
 	 
 	static {
 		client=connection.CONNECT();
+		 index="images_rsh";
 		 searchRequest = new SearchRequest();
 		 searchSourceBuilder= new SearchSourceBuilder();
-		 searchRequest.indices("images_rsh");
+		 searchRequest.indices(index);
+		
 	}
 	
 
@@ -60,6 +65,8 @@ public class indexfct {
 		         SearchHit[] searchHit = searchResponse.getHits().getHits();
 		         for (SearchHit hit : searchHit) {
 		             map = hit.getSourceAsMap();  
+		             map.put("id", hit.getId());
+		             System.out.println(map);
 		             array.add(map);
 		         }
 		         return array;
@@ -162,4 +169,11 @@ public class indexfct {
 		}
 
 
+	
+	public static void delete(String id) throws IOException {
+DeleteRequest deleteRequest = new DeleteRequest(index, id);
+        
+        // Execute the request
+        DeleteResponse deleteResponse = client.delete(deleteRequest, RequestOptions.DEFAULT);
+	}
 }
