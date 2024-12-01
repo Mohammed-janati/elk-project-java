@@ -7,10 +7,10 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>22</maven.compiler.source> <!-- Change this to your Java version -->
-        <maven.compiler.target>22</maven.compiler.target> <!-- Change this to your Java version -->
+        <maven.compiler.source>22</maven.compiler.source> 
+        <maven.compiler.target>22</maven.compiler.target>
        
-        <javafx.version>21.0.5</javafx.version> <!-- Set your desired JavaFX version -->
+        <javafx.version>21.0.5</javafx.version> 
     </properties>
 
     <dependencies>
