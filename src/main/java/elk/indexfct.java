@@ -32,15 +32,16 @@ public class indexfct {
 	 
 	static {
 		client=connection.CONNECT();
-		 index="images_rsh";
-		 searchRequest = new SearchRequest();
-		 searchSourceBuilder= new SearchSourceBuilder();
-		 searchRequest.indices(index);
+		
 		
 	}
 	
 	public static boolean auth(String user,String passw) throws IOException {
-		 searchRequest.indices("auth");
+		
+		 searchRequest = new SearchRequest();
+		
+		
+		searchRequest.indices("auth");
 		 
 		 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		    BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -66,11 +67,14 @@ public class indexfct {
 	
 
 	public static ArrayList<Map<String, Object>> searchtxt(String category,String w) throws IOException {
+		 index="images_rsh";
+		 searchRequest = new SearchRequest();
 		
+		 searchRequest.indices(index);
 	    SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 	    BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 	    
-	    boolQuery.must(QueryBuilders.matchQuery("title",w));
+	    boolQuery.must(QueryBuilders.multiMatchQuery(w,"title","tags"));
 	    boolQuery.must(QueryBuilders.termQuery("type", "text"));
 	    boolQuery.must(QueryBuilders.termQuery("category", category));
 	   
@@ -106,9 +110,12 @@ public class indexfct {
 	
 	
 	
-	public static ArrayList<Map<String, Object>>  searchimage(String mustKeyword, String shouldKeyword) {
+	public static ArrayList<Map<String, Object>>  searchimage(String mustKeyword) {
 		
-		 
+		 index="images_rsh";
+		 searchRequest = new SearchRequest();
+		 searchSourceBuilder= new SearchSourceBuilder();
+		 searchRequest.indices(index);
 		 
 		 
 		 BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
@@ -116,13 +123,10 @@ public class indexfct {
 	        // Add a must clause (required)
 		 boolQuery.must(QueryBuilders.termQuery("type", "image"));
 	        if (mustKeyword != null && !mustKeyword.isEmpty()) {
-	            boolQuery.must(QueryBuilders.multiMatchQuery(mustKeyword, "title", "tags", "description"));
+	            boolQuery.should(QueryBuilders.multiMatchQuery(mustKeyword, "title", "tags"));
 	        }
 	        
-	        // Add a should clause (optional)
-	        if (shouldKeyword != null && !shouldKeyword.isEmpty()) {
-	            boolQuery.should(QueryBuilders.multiMatchQuery(shouldKeyword,"tags"));
-	        }
+	       
 
 	        searchSourceBuilder.query(boolQuery);
 	        searchSourceBuilder.fetchSource(new String[] {"url"}, null); 
@@ -144,7 +148,7 @@ public class indexfct {
 		         for (SearchHit hit : searchHit) {
 		             map = hit.getSourceAsMap();  
 		             array.add(map);
-		            
+		            System.out.println(map);
 		         }
 		         return array;
 		     }
@@ -156,6 +160,7 @@ public class indexfct {
 
 
 	public static void insert(indexobj i) {
+		 
 		try {
 		IndexRequest request = new IndexRequest("images_rsh"); // Specify the index name
 		 Map<String, Object> document = new HashMap<>();
@@ -167,7 +172,9 @@ public class indexfct {
 	     // Create a document as a map or JSON string
 	    
 	     document.put("title",i.title);
-	     document.put("tags", i.tags);
+	     String[] o=i.tags.split(",");
+	     
+	     document.put("tags",o);
 	     document.put("type", i.type);
 	     document.put("category", i.cat);
 	     document.put("url", i.url);

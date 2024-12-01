@@ -41,7 +41,7 @@ public class inputs {
     @FXML
     private  TextArea description;
     @FXML
-    private  Label i1,error;
+    private  Label i1,error,chose;
     @FXML
     private  ScrollPane sc;
     @FXML
@@ -178,7 +178,7 @@ public class inputs {
 
         try {
             if (!a.isEmpty()) {
-                result = indexfct.searchimage( a, null);
+                result = indexfct.searchimage( a);
 
                 if (result.isEmpty()) {
                     i1.setVisible(true);
@@ -336,16 +336,18 @@ public class inputs {
     	
     	}
     }
-    
+    Path targetPath;
+    File selectedc;
+   
     public void imagechoser(ActionEvent e) throws IOException {
     	FileChooser fc=new FileChooser();
     	 fc.getExtensionFilters().add(
     	            new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
     	        );
     	 
-    	File selected=fc.showOpenDialog(null);
+    	selectedc=fc.showOpenDialog(null);
     	
-    	if(selected!=null) {
+    	if(selectedc!=null) {
     		String projectDir = System.getProperty("user.dir");
     		
             Path targetFolder = Path.of(projectDir, "src", "main", "resources", "images");
@@ -356,12 +358,12 @@ public class inputs {
             }
             
             // Define the target file path
-            Path targetPath = targetFolder.resolve(selected.getName());
+             targetPath = targetFolder.resolve(selectedc.getName());
             i.url= targetPath.toString();
             
             b=1;
             // Copy the selected file to the target folder
-            Files.copy(selected.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);  
+      
             }
     
     }
@@ -380,11 +382,31 @@ public class inputs {
     		i.description=description.getText();
         	i.tags=tags.getText();
         	i.title=title.getText();
+    	
+        	
+    	
+        	if(selected!="image" ) {
+        		indexfct.insert(i);
+        		
+        	}
+        	
+        	else {
+        		if(selectedc!=null) {
+        	System.out.println(selectedc.toPath());
+        	System.out.println(targetPath);
+        	Files.copy(selectedc.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);  
+        	indexfct.insert(i);
+        	
+        	this.switchToScene2(e);
+        	}else {
+        		chose.setVisible(true);
+        	}
+        		}
+        	
+        	
+        	
     	}
     	
-    	indexfct.insert(i);
-    	
-    	this.switchToScene2(e);
     	
     	
     	

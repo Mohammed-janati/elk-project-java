@@ -85,7 +85,7 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="564.0">
                      <children>
-                        <Label text="Label">
+                        <Label text="image">
                            <HBox.margin>
                               <Insets left="100.0" />
                            </HBox.margin>
@@ -95,6 +95,11 @@
                               <Insets left="60.0" />
                            </HBox.margin>
                         </Button>
+                        <Label fx:id="chose" text="image is required" textFill="RED" visible="false">
+                           <HBox.margin>
+                              <Insets left="15.0" />
+                           </HBox.margin>
+                        </Label>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="109.0" prefWidth="577.0">
