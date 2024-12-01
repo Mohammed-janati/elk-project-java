@@ -65,6 +65,31 @@ public class indexfct {
 	
 	}
 	
+	public static boolean auth(String user,String passw) throws IOException {
+		 searchRequest.indices("auth");
+		 
+		 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		    BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+		    	
+	if (user != null && !user.isEmpty()) {
+		    boolQuery.must(QueryBuilders.matchQuery("user",user));
+	}
+	if (passw != null && !passw.isEmpty()) {
+		boolQuery.must(QueryBuilders.matchQuery("passw",passw));
+	}
+		   
+
+	searchSourceBuilder.query(boolQuery);
+	searchRequest.source(searchSourceBuilder);
+	SearchResponse searchResponse =client.search(searchRequest, RequestOptions.DEFAULT);
+	
+	if (searchResponse.getHits().getTotalHits().value > 0) {
+		System.out.println("found");
+		return true;
+	}else return false;
+	
+	}
+	
 
 	public static ArrayList<Map<String, Object>> searchtxt(String category,String w) throws IOException {
 		 index="images_rsh";
