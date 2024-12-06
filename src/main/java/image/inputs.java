@@ -1,17 +1,24 @@
 package image;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+
+
+import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import elk.connection;
 import elk.indexfct;
+import image.KeywordAnalyticsController.Keyword;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +26,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -34,23 +46,38 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+
+
+import javafx.stage.FileChooser;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+
 public class inputs {
 
     @FXML
-    private  TextField input,title,tags,user,passw;
+    private  TextField input,title,tags,user,passw,Ttags,Tprice,Tid;
     @FXML
-    private  TextArea description;
+    private TextField Ttitle;
     @FXML
-    private  Label i1,error,chose;
+    private  TextArea description,Tdescription;
+    @FXML
+    private  Label i1,error,chose,priceLabel;
  
     @FXML
     private  ScrollPane sc;
     @FXML
     private  FlowPane pane;
     @FXML
-    private  VBox list;
+    private  VBox list,keywordsVBox;
     @FXML
-    private  Button search,file;
+    private  Button search,filen,edit;
     @FXML
     private  ComboBox<String> category;
 
@@ -108,6 +135,14 @@ public class inputs {
 	  stage.setTitle("welcome to search engine"); 
 	  stage.show();
 	 }
+ 	 public void switchToScene5(ActionEvent event) throws IOException {
+ 		 root = FXMLLoader.load(getClass().getResource("/view5.fxml"));
+ 		 stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+ 		 scene = new Scene(root);
+ 		 stage.setScene(scene);
+ 		 stage.setTitle("welcome to search engine"); 
+ 		 stage.show();
+ 	 }
 	 
 	 public void switchToScene2(ActionEvent event) throws IOException {
 		 category.getItems().addAll("livre", "service");
@@ -138,7 +173,49 @@ public class inputs {
 		 stage.setTitle("authentication"); 
 		 stage.show();
 	 }
-    
+	/* public void switchToScene6(ActionEvent event) throws IOException {
+		    try {
+		        // Load the new FXML file for the scene
+		        Parent root = FXMLLoader.load(getClass().getResource("/view6.fxml"));
+		        
+		        // Get the current stage and set a new scene
+		        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		        scene = new Scene(root);
+		        stage.setScene(scene);
+		        stage.setTitle("authentication");
+		        
+		        // Retrieve the document by ID
+		        Map<String, Object> document = indexfct.getDocumentById(id);
+		        if (document != null) {
+		            // Safely update UI components with document data
+		            if (document.containsKey("tags") && document.get("tags") instanceof String[]) {
+		                Ttags.setText(String.join(",", (String[]) document.get("tags")));  // If tags are stored as an array
+		            }
+		            if (document.containsKey("title") && document.get("title") instanceof String[]) {
+		            	Ttitle.setText(String.join(",", (String[]) document.get("title")));  // If tags are stored as an array
+		            }
+		            if (document.containsKey("description")) {
+		                Tdescription.setText((String) document.get("description"));
+		            }
+		            if (document.containsKey("category")) {
+		                category.setValue((String) document.get("category"));
+		            }
+		            if (document.containsKey("price")) {
+		                Tprice.setText(String.valueOf(document.get("price")));
+		            }
+		            Tid.setText(id);
+		        } else {
+		            System.err.println("Document not found for ID: " + id);
+		        }
+		        
+		        // Show the new scene
+		        stage.show();
+		    } catch (IOException e) {
+		        System.err.println("Error loading FXML or setting scene: " + e.getMessage());
+		        e.printStackTrace();
+		    }
+		}*/
+
     
     public void getcat(ActionEvent e) throws IOException {
     	a = input.getText();
@@ -152,6 +229,7 @@ public class inputs {
     			pane.getChildren().clear(); 
     	        list.getChildren().clear(); 
     			this.getimage(e);
+    			
     			i1.setVisible(false);
     			
     		}else {
@@ -161,7 +239,12 @@ public class inputs {
     	    	pane.getChildren().clear(); 
     	        list.getChildren().clear(); 
     			this.gettext(e, selected);
+    			
     		}
+    		
+    		jdbc.getConnection();
+    		jdbc.checkAndInsertOrUpdate(a,selected);
+    		
     		
     	}
     }
@@ -279,6 +362,11 @@ public class inputs {
 				            if (key.equals("id")) {
 				                id = value.toString(); // Save the ID for the delete button
 				            }
+				            
+				            if (key.equals("price")) {
+	                            priceLabel = new Label("Price: $" + value);
+	                            priceLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #007B00;"); // Green text for price
+	                        }
 				        }
 
 				        // Create the delete button if the ID is available
@@ -299,7 +387,29 @@ public class inputs {
 									e1.printStackTrace();
 								}
 				            });
+				           /* edit = new Button("edit");
+				            edit.setStyle("-fx-background-color: blue; -fx-text-fill: white; -fx-padding: 5; -fx-font-size: 12px; -fx-border-radius: 3; -fx-background-radius: 3;");
+				            edit.setUserData(id); // Store the ID in the button's userData property
+				           
+				            edit.setOnAction(event -> {
+				                String documentId = (String) edit.getUserData();
+				                System.out.println("edit button clicked for ID: " + documentId);
+				                // Add your delete logic here
+				                try {
+									
+									
+									//this.switchToScene6(e);
+				                	
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+				            });
+				            */
+				            
+				            
 				        }
+				        
 
 				        // Add the title and description to the text container
 				        if (titleLabel != null) {
@@ -308,6 +418,10 @@ public class inputs {
 				        if (descriptionLabel != null) {
 				            textContainer.getChildren().add(descriptionLabel);
 				        }
+				        if (priceLabel != null) {
+	                        textContainer.getChildren().add(priceLabel);
+	                    }
+				        
 
 				        // Combine the text container and delete button in an HBox
 				        HBox itemContainer = new HBox();
@@ -321,6 +435,12 @@ public class inputs {
 				            deleteButton.setAlignment(Pos.CENTER_RIGHT);
 				            itemContainer.getChildren().add(deleteButton);
 				        }
+				     /*   if (edit != null) {
+				        	// Add spacing and alignment for the delete button
+				        	HBox.setHgrow(textContainer, Priority.ALWAYS); // Allow the text to take up remaining space
+				        	edit.setAlignment(Pos.CENTER_RIGHT);
+				        	itemContainer.getChildren().add(edit);
+				        }*/
 
 				        // Add itemContainer to the main list container
 				        list.getChildren().add(itemContainer);
@@ -415,73 +535,236 @@ public class inputs {
     	
     	
     }
+    @FXML
+    CheckBox filtre;
     
     
- public  void gettext(ActionEvent e,String cat) throws IOException {
-    	
-    	pane.setVisible(false);
-    	list.setVisible(true);
-    	
-    	if(!a.isEmpty()) {
-    		result=indexfct.searchtxt(cat,a);
-    		 if (result.isEmpty()) {
-                 i1.setVisible(true);
-                 i1.setText("no item found");
-    		 }else {
-    		
-    		
-    			 for (Map<String, Object> person : result) {
-    				    // Create a container for each item (e.g., a VBox for title and description)
-    				    VBox itemContainer = new VBox();
-    				    itemContainer.setSpacing(2);// Add spacing between title and description
-    				    itemContainer.setStyle("-fx-padding: 10; -fx-border-color: #ccc; -fx-border-width: 1; -fx-background-color: #f9f9f9; -fx-border-radius: 5; -fx-background-radius: 5;");
+    public void gettext(ActionEvent e, String cat) throws IOException {
 
-    				    Label titleLabel = null;
-    				    Label descriptionLabel = null;
+        pane.setVisible(false);
+        list.setVisible(true);
 
-    				    for (Map.Entry<String, Object> entry : person.entrySet()) {
-    				        String key = entry.getKey();
-    				        Object value = entry.getValue();
+        if (!a.isEmpty()) {
+            result = indexfct.searchtxt(cat, a);
+            if (filtre.isSelected()) {
+             
+            result.sort((map1, map2) -> {
+                // Get the price values and handle potential null values or type mismatches
+                Object price1 = map1.get("price");
+                Object price2 = map2.get("price");
 
-    				        if (key.equals("title")) {
-    				            titleLabel = new Label(value.toString());
-    				            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
-    				            titleLabel.setWrapText(true);
-    				        }
+                // Convert price to Double for comparison
+                Double value1 = price1 instanceof Number ? ((Number) price1).doubleValue() : 0.0;
+                Double value2 = price2 instanceof Number ? ((Number) price2).doubleValue() : 0.0;
 
-    				        if (key.equals("description")) {
-    				            descriptionLabel = new Label(value != null ? value.toString() : "No description available");
-    				            descriptionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
-    				            descriptionLabel.setWrapText(true);
-    				        }
-    				    }
+                return value2.compareTo(value1);
+            });
+            
+            } 
+            if (result.isEmpty()) {
+                i1.setVisible(true);
+                i1.setText("no item found");
+            } else {
+                for (Map<String, Object> person : result) {
+                    // Create a container for each item (e.g., a VBox for title, description, and price)
+                    VBox itemContainer = new VBox();
+                    itemContainer.setSpacing(5); // Add spacing between title, description, and price
+                    itemContainer.setStyle("-fx-padding: 10; -fx-border-color: #ccc; -fx-border-width: 1; -fx-background-color: #f9f9f9; -fx-border-radius: 5; -fx-background-radius: 5;");
 
-    				    // Add the title and description to the item container
-    				    if (titleLabel != null) {
-    				        itemContainer.getChildren().add(titleLabel);
-    				    }
-    				    if (descriptionLabel != null) {
-    				        itemContainer.getChildren().add(descriptionLabel);
-    				    }
+                    Label titleLabel = null;
+                    Label descriptionLabel = null;
+                    Label priceLabel = null;
 
-    				    // Add itemContainer to the main list container
-    				    list.getChildren().add(itemContainer);
-    				}
+                    for (Map.Entry<String, Object> entry : person.entrySet()) {
+                        String key = entry.getKey();
+                        Object value = entry.getValue();
 
-    		 }//end checking result existance
-    		 
-    		 
-    	}else {}
-    	
-    	
-    	
-    	
+                        if (key.equals("title")) {
+                            titleLabel = new Label(value.toString());
+                            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333;");
+                            titleLabel.setWrapText(true);
+                        }
+
+                        if (key.equals("description")) {
+                            descriptionLabel = new Label(value != null ? value.toString() : "No description available");
+                            descriptionLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666;");
+                            descriptionLabel.setWrapText(true);
+                        }
+
+                        if (key.equals("price")) {
+                            priceLabel = new Label("Price: $" + value);
+                            priceLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #007B00;"); // Green color for price
+                        }
+                    }
+
+                    // Add the title, description, and price to the item container
+                    if (titleLabel != null) {
+                        itemContainer.getChildren().add(titleLabel);
+                    }
+                    if (descriptionLabel != null) {
+                        itemContainer.getChildren().add(descriptionLabel);
+                    }
+                    if (priceLabel != null) {
+                        itemContainer.getChildren().add(priceLabel);
+                    }
+
+                    // Add itemContainer to the main list container
+                    list.getChildren().add(itemContainer);
+                }
+            }
+        }
     }
+
  
+ 
+ public void displayanal(ActionEvent e) throws IOException {
+	    String selected = category.getValue();
+	    if (selected == null || selected.isEmpty()) {
+	        i1.setVisible(true);
+	        i1.setText("Please select a category");
+	    } else {
+	        List<KeywordAnalyticsController.Keyword> topKeywords = KeywordAnalyticsController.getTopTrendingKeywords(selected);
+
+	        // Clear the VBox
+	        keywordsVBox.getChildren().clear();
+
+	        // Create a Bar Chart
+	        CategoryAxis xAxis = new CategoryAxis();
+	        xAxis.setLabel("Keyword");
+
+	        NumberAxis yAxis = new NumberAxis();
+	        yAxis.setLabel("Count");
+
+	        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+	        barChart.setTitle("Top Trending Keywords for " + selected);
+
+	        // Create a data series
+	        XYChart.Series<String, Number> dataSeries = new XYChart.Series<>();
+	        dataSeries.setName("Keyword Counts");
+
+	        // Populate the data series with keyword data
+	        for (KeywordAnalyticsController.Keyword keyword : topKeywords) {
+	            dataSeries.getData().add(new XYChart.Data<>(keyword.getWord(), keyword.getCount()));
+	        }
+
+	        // Add the data series to the chart
+	        barChart.getData().add(dataSeries);
+
+	        // Add the Bar Chart to the VBox
+	        keywordsVBox.getChildren().add(barChart);
+	    }
+	}
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ public void importData(ActionEvent event) throws IOException {
+     // Open file chooser
+     FileChooser fileChooser = new FileChooser();
+     fileChooser.setTitle("Open Excel File");
+     fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls"));
+     File file = fileChooser.showOpenDialog(null);
+
+     if (file != null) {
+         // Process the selected Excel file
+         importExcelToElasticsearch(file);
+         this.switchToScene2(event);
+     }
+ }
+ 
+ 
+ private void importExcelToElasticsearch(File file) {
+     try (FileInputStream fis = new FileInputStream(file);
+          Workbook workbook = new XSSFWorkbook(fis)) {
+
+         Sheet sheet =  workbook.getSheetAt(0); // Read the first sheet
+         BulkRequest bulkRequest = new BulkRequest();
+
+         for (Row row : sheet) {
+             // Skip header row
+             if (row.getRowNum() == 0) {
+            	 System.out.println("row null");
+            	 continue;
+             }
+
+             // Read columns from the row
+             String title = row.getCell(0).getStringCellValue();
+             String tags = row.getCell(1).getStringCellValue();
+             String category = row.getCell(2).getStringCellValue();
+             String description = row.getCell(3).getStringCellValue();
+             double price = row.getCell(4).getNumericCellValue(); // Assuming price is in column 5
+
+             indexobj b=new indexobj();
+             b.setCat(category);
+             b.setTags(tags);
+             b.setTitle(title);
+            b.description=description;
+             b.price=(float) price;
+             
+           indexfct.insert(b);
+         }
+         
+         System.out.println("done");
+     } catch (IOException e) {
+         e.printStackTrace();
+     }
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ public void update(ActionEvent e) throws IOException {
+ 	
+ 	
+ 	//check category entred
+ 	String selected=category.getValue();
+ 	if(selected==null || selected.isEmpty()) {
+ 		
+ 		i1.setVisible(true);
+ 		i1.setText("please select a category");
+ 	}else {
+ 		
+ 		i.setCat(selected);
+ 		i.description=Tdescription.getText();
+     	i.tags=Ttags.getText();
+     	i.title=Ttitle.getText();
+     	i.price=Integer.parseInt(Tprice.getText());
+     	i.cat=selected;
+     	String idq=Tid.getText();
+     	indexfct.update(idq, i);
+ 	
+     	this.switchToScene2(e);
+ 	
+     	
+     	
+     	
+     	
+ 	}
+ 	
+ 	
+ }
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
 }
-
-
-
 
 
 //file:///C:/Users/hp/eclipse-workspace/image/src/main/resources/images/image-pomme-dm16119.png

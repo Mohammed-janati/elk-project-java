@@ -13,13 +13,13 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="image.inputs">
    <top>
-      <VBox alignment="CENTER" prefHeight="43.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="83.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
+            <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#switchToScene1" text="home" textAlignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#switchToScene1" text="HOME" textAlignment="CENTER">
                      <HBox.margin>
-                        <Insets right="10.0" top="2.0" />
+                        <Insets left="10.0" right="10.0" top="2.0" />
                      </HBox.margin>
                   </Button>
                </children>
@@ -28,6 +28,11 @@
                </opaqueInsets>
             </HBox>
             <ComboBox fx:id="category" prefWidth="150.0" visible="false" />
+            <Label alignment="CENTER" prefHeight="49.0" prefWidth="191.0" style="-fx-text-fill: green;" text="LOGIN">
+               <font>
+                  <Font name="Arial Bold" size="32.0" />
+               </font>
+            </Label>
             <Label fx:id="i1" alignment="CENTER" prefHeight="27.0" prefWidth="349.0" text="no item found" visible="false">
                <font>
                   <Font name="Arial" size="24.0" />
@@ -38,9 +43,9 @@
    </top>
    <center>
       <!-- ScrollPane to display images with limited viewport height -->
-      <ScrollPane fx:id="sc" fitToWidth="true" hbarPolicy="AS_NEEDED" prefHeight="136.0" prefWidth="580.0" style="-fx-border-width: 0; -fx-background-color: transparent; -fx-border-color: white;" vbarPolicy="AS_NEEDED">
+      <ScrollPane fx:id="sc" fitToWidth="true" hbarPolicy="AS_NEEDED" prefHeight="297.0" prefWidth="580.0" style="-fx-border-width: 0; -fx-background-color: transparent; -fx-border-color: white;" vbarPolicy="AS_NEEDED">
     <content>
-        <VBox alignment="CENTER" maxWidth="Infinity" prefHeight="294.0" prefWidth="577.0" spacing="10.0">
+        <VBox alignment="CENTER" maxWidth="Infinity" prefHeight="266.0" prefWidth="577.0" spacing="10.0">
                <children>
                   <HBox alignment="CENTER" prefHeight="33.0" prefWidth="577.0">
                      <children>

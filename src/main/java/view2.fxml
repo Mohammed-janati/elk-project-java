@@ -16,16 +16,26 @@
    <top>
       <VBox alignment="CENTER" prefHeight="143.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#switchToScene3" text="add" textAlignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#switchToScene1" text="HOME">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#switchToScene5" text="STATISTIC">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" top="2.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#switchToScene3" text="add a record" textAlignment="CENTER">
                      <HBox.margin>
                         <Insets right="10.0" top="2.0" />
                      </HBox.margin>
                   </Button>
                </children>
                <opaqueInsets>
-                  <Insets right="23.0" />
+                  <Insets left="23.0" right="23.0" />
                </opaqueInsets>
             </HBox>
             <Label alignment="CENTER" prefHeight="49.0" prefWidth="191.0" style="-fx-text-fill: green;" text="Search">

@@ -7,6 +7,7 @@ public class indexobj {
  public String cat;
  public String url;
  public String description;
+ public float price;
  
  
  

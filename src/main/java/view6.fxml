@@ -66,7 +66,7 @@
                   <HBox alignment="CENTER" prefHeight="30.0" prefWidth="564.0">
                      <children>
                         <Label text="TITLE" />
-                        <TextField fx:id="title" prefWidth="300.0">
+                        <TextField fx:id="Ttitle" prefWidth="300.0" promptText="title">
                            <HBox.margin>
                               <Insets left="60.0" />
                            </HBox.margin>
@@ -79,7 +79,7 @@
                   <HBox alignment="CENTER" prefHeight="30.0" prefWidth="564.0">
                      <children>
                         <Label text="TAGS" />
-                        <TextField fx:id="tags" prefHeight="25.0" prefWidth="300.0">
+                        <TextField fx:id="Ttags" prefHeight="25.0" prefWidth="300.0">
                            <HBox.margin>
                               <Insets left="60.0" />
                            </HBox.margin>
@@ -111,7 +111,7 @@
                   <HBox alignment="CENTER" prefHeight="109.0" prefWidth="577.0">
                      <children>
                         <Label text="DESCRIPTION" />
-                        <TextArea fx:id="description" prefHeight="109.0" prefWidth="299.0">
+                        <TextArea fx:id="Tdescription" prefHeight="109.0" prefWidth="299.0">
                            <HBox.margin>
                               <Insets left="20.0" />
                            </HBox.margin>
@@ -123,7 +123,17 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="30.0" prefWidth="564.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#submit" text="SUBMIT" />
+                        <Label text="PRICE" />
+                        <TextField fx:id="Tprice" prefHeight="25.0" prefWidth="300.0">
+                           <HBox.margin>
+                              <Insets left="60.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="30.0" prefWidth="564.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#update" text="SUBMIT" />
                      </children>
                   </HBox>
                </children>

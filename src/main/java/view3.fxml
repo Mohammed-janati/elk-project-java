@@ -14,21 +14,32 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="image.inputs">
    <top>
-      <VBox alignment="CENTER" prefHeight="107.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="85.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="TOP_RIGHT" prefHeight="33.0" prefWidth="600.0">
+            <HBox alignment="CENTER_LEFT" prefHeight="119.0" prefWidth="600.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#switchToScene1" text="home" textAlignment="CENTER">
+                  <Button mnemonicParsing="false" onAction="#switchToScene2" text="HOME">
                      <HBox.margin>
-                        <Insets right="10.0" top="2.0" />
+                        <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
+                  <Button mnemonicParsing="false" onAction="#switchToScene5" text="STATISTIC">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" top="2.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#importData" text="import from exel" />
                </children>
                <opaqueInsets>
-                  <Insets right="23.0" />
+                  <Insets left="23.0" right="23.0" />
                </opaqueInsets>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="51.0" prefWidth="589.0" spacing="5.0">
+            <Label fx:id="i1" alignment="CENTER" prefHeight="27.0" prefWidth="349.0" text="no item found" visible="false">
+               <font>
+                  <Font name="Arial" size="24.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="62.0" prefWidth="589.0" spacing="5.0">
                <children>
                   <Label text="category:" />
                   <ComboBox fx:id="category" prefWidth="150.0" />
@@ -40,11 +51,6 @@
                   <Insets right="10.0" />
                </padding>
             </HBox>
-            <Label fx:id="i1" alignment="CENTER" prefHeight="27.0" prefWidth="349.0" text="no item found" visible="false">
-               <font>
-                  <Font name="Arial" size="24.0" />
-               </font>
-            </Label>
          </children>
       </VBox>
    </top>
